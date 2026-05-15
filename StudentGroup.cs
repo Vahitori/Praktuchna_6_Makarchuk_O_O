@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using Shapes;
 
 namespace StudentManagement;
 
@@ -243,11 +244,41 @@ public class StudentGroup
         Console.WriteLine($"  └─────────────────────────────────────────────┘");
     }
 
-    public void AssignStudentToPort(Student s, int row, int col)
-    {
-        if (!_members.Contains(s))
-            throw new ArgumentException("Студент не знайдений у групі.");
         _studentPorts[s.RecordBookNumber] = (row, col);
+    }
+
+    // ─── PR6: Polymorphic Shape Methods ──────────────────────────────────────
+
+    public List<Shape> GetAllShapes()
+        => _members.OfType<Student>().SelectMany(s => s.ScientificShapes).ToList();
+
+    public double GetTotalAreaOfAllShapes()
+        => GetAllShapes().Sum(s => s.CalculateArea());
+
+    public void DrawAllShapes()
+    {
+        Console.WriteLine("\n  ── Малювання всіх наукових проєктів (фігур) ──");
+        var shapes = GetAllShapes();
+        if (shapes.Count == 0) { Console.WriteLine("  [!] Фігур не знайдено."); return; }
+        foreach (var s in shapes) s.Draw();
+    }
+
+    public void ResizeAllShapes(double factor)
+    {
+        Console.WriteLine($"\n  [i] Зміна розміру всіх фігур на коефіцієнт: {factor}");
+        foreach (var s in GetAllShapes())
+        {
+            if (s is IResizable r) r.Resize(factor);
+        }
+    }
+
+    public void ShowAllShapesInfo()
+    {
+        Console.WriteLine("\n  ── Інформація про всі фігури (IPrintable) ──");
+        foreach (var s in GetAllShapes())
+        {
+            if (s is IPrintable p) Console.WriteLine($"  → {p.GetPrintInfo()}");
+        }
     }
 }
 
