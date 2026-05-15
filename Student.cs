@@ -1,5 +1,6 @@
 using System.Text;
 using Praktuchna_Makarchuk_O_O;
+using Shapes;
 
 namespace StudentManagement;
 
@@ -21,6 +22,9 @@ public class Student : Person, IUniversityMember, ICloneable
         set => _courseProgress = Math.Clamp(value, 0, 100);
     }
     public List<GradePoint> Grades { get; private set; } = new List<GradePoint>();
+
+    // PR6: Polymorphic collection of shapes (Scientific projects)
+    public List<Shape> ScientificShapes { get; set; } = new List<Shape>();
 
     public string RecordBookNumber
     {

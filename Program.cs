@@ -2,6 +2,8 @@ using System.Text;
 using StudentManagement;
 using Praktuchna_Makarchuk_O_O;
 using Variant2;
+using Shapes;
+using PaymentSystem;
 
 // ─── Initial data ─────────────────────────────────────────────────────────────
 var group = new StudentGroup("КН-21", "Комп'ютерні науки", 2);
@@ -110,6 +112,15 @@ while (running)
             case "28": EnrollStudentDemo(group); break;
             case "29": VehicleHierarchyDemo(); break;
             case "30": VehiclePolymorphismDemo(); break;
+            // ── PR6 (Поліморфізм) ──
+            case "31": AddShapeMenu(group); break;
+            case "32": group.ShowAllShapesInfo(); break;
+            case "33": Console.WriteLine($"  Загальна площа: {group.GetTotalAreaOfAllShapes():F2}"); break;
+            case "34": ResizeShapesMenu(group); break;
+            case "35": group.DrawAllShapes(); break;
+            case "36": group.ShowAllShapesInfo(); break; // Same as 32 but focus on interface
+            case "37": DynamicBindingDemo(group); break;
+            case "38": PaymentDemo(); break;
             case "0":  running = false; break;
             default:   Console.WriteLine("  [!] Невірний вибір."); break;
         }
@@ -148,9 +159,12 @@ static void PrintMenuHeader()
     Console.WriteLine("║  12. Нормалізація             26. Фільтр за типом            ║");
     Console.WriteLine("║  13. Паліндроми в нотатках    27. Стипендії + фонд          ║");
     Console.WriteLine("║  14. Експорт у CSV            28. Зарахування (Enroll)      ║");
-    Console.WriteLine("║  15. Імпорт з тексту          29. Варіант 2: Vehicle демо   ║");
-    Console.WriteLine("║                               30. Варіант 2: Поліморфізм   ║");
-    Console.WriteLine("║                                0. Вийти                     ║");
+    Console.WriteLine("║  15. Імпорт з тексту          29. Vehicle демо               ║");
+    Console.WriteLine("║  31. Додати фігуру        30. Поліморфізм (Vehicle)         ║");
+    Console.WriteLine("║  32. Список фігур         33. Загальна площа                ║");
+    Console.WriteLine("║  34. Змінити розмір фігури  35. Малювати фігури             ║");
+    Console.WriteLine("║  36. Інтерфейс фігури     37. Dynamic Binding (Demo)        ║");
+    Console.WriteLine("║  38. Демо платежів (Вар 2) 0. Вийти                         ║");
     Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
     Console.Write("  Ваш вибір: ");
 }
@@ -468,4 +482,80 @@ static void VehiclePolymorphismDemo()
     Console.WriteLine("\n  ── Фільтрація: тільки вантажівки з рефрижератором ──");
     var fridgeTrucks = fleet.OfType<Truck>().Where(t => t.HasRefrigerator);
     foreach (var t in fridgeTrucks) Console.WriteLine($"  {t.GetInfo()}");
+}
+
+// ─── PR6 NEW handlers ─────────────────────────────────────────────────────────
+
+static void AddShapeMenu(StudentGroup group)
+{
+    Console.Write("  Введіть номер залікової студента: ");
+    string rb = Console.ReadLine() ?? "";
+    var s = group[rb];
+    if (s == null) { Console.WriteLine("  [!] Студента не знайдено."); return; }
+
+    Console.WriteLine("  Оберіть тип фігури: 1 - Коло, 2 - Прямокутник, 3 - Квадрат, 4 - Трикутник");
+    string type = Console.ReadLine() ?? "1";
+    Console.Write("  Назва фігури: "); string name = Console.ReadLine() ?? "Shape";
+    Console.Write("  Колір: "); string color = Console.ReadLine() ?? "White";
+
+    Shape? shape = type switch
+    {
+        "1" => new Circle(name, color, 5.0),
+        "2" => new Rectangle(name, color, 10.0, 5.0),
+        "3" => new Square(name, color, 7.0),
+        "4" => new Triangle(name, color, 3, 4, 5),
+        _   => null
+    };
+
+    if (shape != null)
+    {
+        s.ScientificShapes.Add(shape);
+        Console.WriteLine($"  [✓] Фігуру {name} додано до студента {s.FullName}.");
+    }
+}
+
+static void ResizeShapesMenu(StudentGroup group)
+{
+    Console.Write("  Введіть коефіцієнт зміни розміру (напр. 1.5 або 0.5): ");
+    if (double.TryParse(Console.ReadLine(), out double factor))
+    {
+        group.ResizeAllShapes(factor);
+    }
+    else Console.WriteLine("  [!] Невірне число.");
+}
+
+static void DynamicBindingDemo(StudentGroup group)
+{
+    Console.WriteLine("  ── Демонстрація динамічного зв’язування (Late Binding) ──\n");
+    var shapes = group.GetAllShapes();
+    if (shapes.Count == 0)
+    {
+        Console.WriteLine("  [!] Спочатку додайте фігури (пункт 31).");
+        return;
+    }
+
+    foreach (var shape in shapes)
+    {
+        // Виклик віртуального методу через базовий тип Shape
+        Console.WriteLine($"  Тип об'єкта: {shape.GetType().Name}");
+        Console.WriteLine($"  Виклик GetDescription(): {shape.GetDescription()}");
+        Console.WriteLine($"  Виклик CalculateArea(): {shape.CalculateArea():F2}");
+        Console.WriteLine("  ---------------------------------------------");
+    }
+}
+
+static void PaymentDemo()
+{
+    Console.WriteLine("  ── Варіант 2: Ієрархія платежів ──\n");
+    var payments = new List<Payment>
+    {
+        new CardPayment(1500.50, "4444-5555-6666-7777"),
+        new CashPayment(200.00),
+        new CryptoPayment(0.05, "0xABC123...XYZ")
+    };
+
+    foreach (var p in payments)
+    {
+        Console.WriteLine($"  [{p.Date:HH:mm:ss}] {p.ProcessPayment()}");
+    }
 }
