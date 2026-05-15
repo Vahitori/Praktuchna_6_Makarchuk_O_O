@@ -2,7 +2,7 @@ using System;
 
 namespace Shapes
 {
-    public class Triangle : Shape
+    public class Triangle : Shape, IResizable
     {
         public double SideA { get; set; }
         public double SideB { get; set; }
@@ -23,5 +23,12 @@ namespace Shapes
 
         public override double CalculatePerimeter() => SideA + SideB + SideC;
         public override string GetDescription() => $"{Name} (Колір: {Color}, Сторони: {SideA:F2}, {SideB:F2}, {SideC:F2})";
+        public override void Draw() => Console.WriteLine($"[△] Малювання трикутника: {GetDescription()}");
+        public void Resize(double factor)
+        {
+            SideA *= factor;
+            SideB *= factor;
+            SideC *= factor;
+        }
     }
 }
