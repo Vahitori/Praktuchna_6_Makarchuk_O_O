@@ -9,5 +9,6 @@ namespace Shapes
         }
 
         public override string GetDescription() => $"{Name} (Колір: {Color}, Сторона: {Side:F2})";
+        public override void Draw() => Console.WriteLine($"[□] Малювання квадрата: {GetDescription()}");
     }
 }

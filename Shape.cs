@@ -1,6 +1,6 @@
 namespace Shapes
 {
-    public abstract class Shape
+    public abstract class Shape : IDrawable, IPrintable
     {
         public string Name { get; set; }
         public string Color { get; set; }
@@ -14,5 +14,7 @@ namespace Shapes
         public virtual double CalculateArea() => 0;
         public virtual double CalculatePerimeter() => 0;
         public abstract string GetDescription();
+        public abstract void Draw();
+        public virtual string GetPrintInfo() => GetDescription();
     }
 }
