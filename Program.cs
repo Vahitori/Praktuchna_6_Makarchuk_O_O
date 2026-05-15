@@ -3,6 +3,7 @@ using StudentManagement;
 using Praktuchna_Makarchuk_O_O;
 using Variant2;
 using Shapes;
+using PaymentSystem;
 
 // ─── Initial data ─────────────────────────────────────────────────────────────
 var group = new StudentGroup("КН-21", "Комп'ютерні науки", 2);
@@ -119,6 +120,7 @@ while (running)
             case "35": group.DrawAllShapes(); break;
             case "36": group.ShowAllShapesInfo(); break; // Same as 32 but focus on interface
             case "37": DynamicBindingDemo(group); break;
+            case "38": PaymentDemo(); break;
             case "0":  running = false; break;
             default:   Console.WriteLine("  [!] Невірний вибір."); break;
         }
@@ -162,7 +164,7 @@ static void PrintMenuHeader()
     Console.WriteLine("║  32. Список фігур         33. Загальна площа                ║");
     Console.WriteLine("║  34. Змінити розмір фігури  35. Малювати фігури             ║");
     Console.WriteLine("║  36. Інтерфейс фігури     37. Dynamic Binding (Demo)        ║");
-    Console.WriteLine("║                                0. Вийти                     ║");
+    Console.WriteLine("║  38. Демо платежів (Вар 2) 0. Вийти                         ║");
     Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
     Console.Write("  Ваш вибір: ");
 }
@@ -539,5 +541,21 @@ static void DynamicBindingDemo(StudentGroup group)
         Console.WriteLine($"  Виклик GetDescription(): {shape.GetDescription()}");
         Console.WriteLine($"  Виклик CalculateArea(): {shape.CalculateArea():F2}");
         Console.WriteLine("  ---------------------------------------------");
+    }
+}
+
+static void PaymentDemo()
+{
+    Console.WriteLine("  ── Варіант 2: Ієрархія платежів ──\n");
+    var payments = new List<Payment>
+    {
+        new CardPayment(1500.50, "4444-5555-6666-7777"),
+        new CashPayment(200.00),
+        new CryptoPayment(0.05, "0xABC123...XYZ")
+    };
+
+    foreach (var p in payments)
+    {
+        Console.WriteLine($"  [{p.Date:HH:mm:ss}] {p.ProcessPayment()}");
     }
 }
